@@ -4,7 +4,7 @@ const Discord = require('discord.js');
 module.exports = class GameManager
 {
     constructor(){
-        this.initialised=false; this.GMChannel=undefined;   this.parObj=undefined; 
+        this.initialised=false; this.GMChannel=undefined;   this.parObj=undefined;  this.GMRoleID=undefined;
         this.guild=undefined;    this.clientID=undefined;   this.prefix="_"; 
     }
     msgHandler(msg, clientID){
@@ -32,9 +32,11 @@ module.exports = class GameManager
 
     async setup(msg, clientID){
         if(msg.member===undefined){msg.reply("ERROR: you are not on a guild"); return;}
-        if(msg.member.roles.cache.find(r => r.name === "GM")){
+        let findGM = msg.member.roles.cache.find(r => r.name === "GM")
+        if(findGM!==undefined){
+            this.GMRoleID=findGM.id;
             this.initialised=false;
-            this.clientID=clientID; this.guild=msg.guild; this.GMChannel=msg.channel;
+            this.clientID=clientID; this.guild=msg.guild; this.GMChannel=msg.channel; 
             if(this.guild!==undefined){
                 this.parObj = this.guild.channels.cache.find(c => c.name == "GM" && c.type == "category");
                 if(this.parObj===undefined){
@@ -51,6 +53,7 @@ module.exports = class GameManager
         let permArr = [{id: msg.author.id, allow: ['VIEW_CHANNEL'],}];
         permArr.push({id: this.guild.id, deny: ['VIEW_CHANNEL'],});
         permArr.push({id: this.clientID, allow: ['VIEW_CHANNEL'],});
+        permArr.push({id: this.GMRoleID, allow: ['VIEW_CHANNEL'],});
         try{await this.guild.channels.create('bot_'+this.getAuthorName(msg),{
             type: 'Text', parent: this.parObj.id, permissionOverwrites: permArr,
         });}catch{
