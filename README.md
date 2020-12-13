@@ -1,5 +1,5 @@
 # LARPCourierBot
-Discord bot for sending up private channels and sending messages to the GM.
+Discord bot for creating private channels visible only to GMs and each individual player, and sending messages to the GM's private channel.
 To download the code from Github, just click 'Code' followed by 'Download Zip'
 
 ## Using the Bot
